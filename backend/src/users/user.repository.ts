@@ -21,7 +21,13 @@ export class UserRepository {
 
     async findById(id: number): Promise<User | null> {
         return this.repository.findOne({
-            where: { id },
+            where: { id }
+        });
+    }
+
+    async findByEmail(email: string): Promise<User | null> {
+        return this.repository.findOne({
+            where: { email }
         });
     }
 

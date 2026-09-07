@@ -9,10 +9,15 @@ export class User {
     @Column()
     name: string;
 
-    @Column()
+    @Column({ unique: true })
     email: string;
 
     @Column()
     password: string;
 
+    constructor(name: string, email: string, password: string) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
 }
