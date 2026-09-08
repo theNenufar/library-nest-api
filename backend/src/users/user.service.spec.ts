@@ -1,18 +1,43 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { UserService } from './user.service';
+import {UserService} from "./user.service";
 
-describe('UsersService', () => {
-  let service: UserService;
+describe('UserService', () => {
+    let userService: UserService;
+    let userRepository: any;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [UserService],
-    }).compile();
+    beforeEach(() => {
+        userRepository = {
+            findByEmail: jest.fn(),
+            save: jest.fn()
+        };
 
-    service = module.get<UserService>(UserService);
-  });
+        userService = new UserService(userRepository);
+    })
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-});
+    it('should create user', async () => {
+        //Arrange
+        const createUserDTO = {
+            name: 'João',
+            email: 'joao@email.com',
+            password: 'Aa123456!'
+        };
+        userRepository.findByEmail = jest.fn().mockResolvedValue(null);
+        userRepository.save = jest.fn().mockResolvedValue({
+            id: 1,
+            name: 'João',
+            email: 'joao@email.com',
+            password: 'Aa123456!'
+        });
+
+        //Act
+        const result = await userService.createUser(createUserDTO);
+
+        //Assert
+        expect(result).toEqual({
+            id: 1,
+            name: 'João',
+            email: 'joao@email.com'
+        });
+        expect(userRepository.findByEmail).toHaveBeenCalledWith('joao@email.com');
+        expect(userRepository.save).toHaveBeenCalled();
+    })
+})
